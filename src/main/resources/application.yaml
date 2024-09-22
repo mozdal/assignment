@@ -1,0 +1,54 @@
+spring:
+  datasource:
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3307/insider}
+    username: ${MYSQL_USER:user}
+    password: ${MYSQL_PASSWORD:password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: ${JPA_SHOW_SQL:true}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  data:
+    redis:
+      host: ${REDIS_URL:localhost}
+      port: ${REDIS_PORT:6379}
+      database: ${REDIS_DB:0}
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+      reactive:
+        enabled: true
+  cloud:
+    openfeign:
+      client:
+        config:
+          externalMessageServiceClient:
+            url: ${EXTERNAL_MESSAGE_SERVICE_URL:https://assignment.free.beeceptor.com}
+
+hibernate:
+  cache:
+    use_second_level_cache: true
+    use_query_cache: false
+    region:
+      factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+
+logging:
+  level:
+    org:
+      springframework: ${SPRING_LOG_LEVEL:INFO}
+      hibernate: ${HIBERNATE_LOG_LEVEL:INFO}
+
+server:
+  port: 8081
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+  packages-to-scan: "com.insider.assignment"
+  paths-to-match: "/**"

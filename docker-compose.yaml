@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: backend
+    ports:
+      - "8081:8081"
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      MYSQL_URL: jdbc:mysql://mariadb_container:3306/insider
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      REDIS_URL: redis_container
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      SPRING_LOG_LEVEL: INFO
+      HIBERNATE_LOG_LEVEL: WARN
+      JPA_SHOW_SQL: false
+      EXTERNAL_MESSAGE_SERVICE_URL: https://assignment.free.beeceptor.com
+    depends_on:
+      - mariadb
+      - redis
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb_container
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: insider
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - "./scripts/schema.sql:/docker-entrypoint-initdb.d/1.sql"
+      - "./scripts/data.sql:/docker-entrypoint-initdb.d/2.sql"
+  redis:
+    image: redis:latest
+    container_name: redis_container
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: [ "redis-server", "--appendonly", "yes" ]
+
+volumes:
+  mariadb_data:
+  redis_data:
+
+
+
+
+
